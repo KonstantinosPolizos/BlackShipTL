@@ -5,15 +5,16 @@ const {
   updateOneNote,
   deleteOneNote,
 } = require("../controllers/NotesController");
+const validateToken = require("../middlewares/TokenValidation");
 
 const express = require("express");
 
 const router = express.Router();
 
-router.get("/:id", getOneNote);
-router.get("/", getManyNotes);
-router.post("/", postOneNote);
-router.put("/:id", updateOneNote);
-router.delete("/:id", deleteOneNote);
+router.get("/:id", validateToken, getOneNote);
+router.get("/", validateToken, getManyNotes);
+router.post("/", validateToken, postOneNote);
+router.put("/:id", validateToken, updateOneNote);
+router.delete("/:id", validateToken, deleteOneNote);
 
 module.exports = router;

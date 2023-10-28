@@ -13,6 +13,10 @@ const userSignIn = async (req, res) => {
       throw new Error("User sign in: all fields are mendadotry!");
     }
 
+    if (!email.includes("@") || !email.endsWith(".com")) {
+      throw new Error("User sign in: type valid email please!");
+    }
+
     const userData = await prisma.user.findUnique({
       where: {
         email: email,
@@ -35,7 +39,7 @@ const userSignIn = async (req, res) => {
       throw new Error("User sign in: error in authentication - jwt");
     }
 
-    res.status(200).json({ token: auth });
+    res.status(200).json({ token: auth, expires: "200" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -43,10 +47,18 @@ const userSignIn = async (req, res) => {
 
 const userSignUp = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, rePassword } = req.body;
 
     if (!name || !email || !password) {
       throw new Error("User sign up: all fields are mendatory!");
+    }
+
+    if (!email.includes("@") || !email.endsWith(".com")) {
+      throw new Error("User sign in: type valid email please!");
+    }
+
+    if (password !== rePassword) {
+      throw new Error("User sign up: passwords must match");
     }
 
     const findEmail = await prisma.user.findUnique({

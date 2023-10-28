@@ -1,38 +1,48 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../index.css";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleEmailChange = (e) => {
-    e.preventDefault();
-
     setEmail(e.target.value);
   };
 
   const handlePasswordChange = (e) => {
-    e.preventDefault();
-
     setPassword(e.target.value);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    const res = await axios.post("http://localhost:8000/api/users/sign-in", {
-      email: email,
-      password: password,
-    });
+      const res = await axios.post("http://localhost:8000/api/users/sign-in", {
+        email: email,
+        password: password,
+      });
 
-    if (!res) {
-      alert("Can't login");
+      const token = res.data.token;
+      const now = new Date();
+      const expirationDate = new Date(
+        now.getTime() + parseInt(res.data.expires) * 60 * 1000
+      );
+
+      const expires = expirationDate.toUTCString();
+      const cookieString = `token=${token}; expires=${expires}; path=/`;
+
+      // Set the cookie
+      document.cookie = cookieString;
+      setEmail("");
+      setPassword("");
+      navigate("/todo");
+    } catch (error) {
+      alert(error.response.data.error);
     }
-
-    console.log(res);
   };
 
   return (
@@ -46,7 +56,10 @@ const Login = () => {
             Welcome back, please login to todo list.
           </Typography>
         </div>
-        <form className="mt-5 mb-10 w-80 max-w-screen-lg sm:w-96">
+        <form
+          className="mt-5 mb-10 w-80 max-w-screen-lg sm:w-96"
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <div className="mb-1 flex flex-col gap-2">
             <Typography variant="h6" color="blue-gray" className="">
               Your Email
@@ -54,6 +67,7 @@ const Login = () => {
             <Input
               size="sm"
               placeholder="name@mail.com"
+              value={email}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900 -mt-5"
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -66,6 +80,7 @@ const Login = () => {
             <Input
               type="password"
               size="sm"
+              value={password}
               placeholder="********"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900  -mt-5"
               labelProps={{
@@ -74,7 +89,7 @@ const Login = () => {
               onChange={(e) => handlePasswordChange(e)}
             />
           </div>
-          <Button className="mt-6" fullWidth onClick={(e) => handleSubmit(e)}>
+          <Button type="submit" className="mt-6" fullWidth>
             login
           </Button>
           <Link to="/sign-up">
