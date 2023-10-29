@@ -39,7 +39,7 @@ const Login = () => {
       document.cookie = cookieString;
       setEmail("");
       setPassword("");
-      navigate("/todo");
+      navigate("/notes");
     } catch (error) {
       alert(error.response.data.error);
     }

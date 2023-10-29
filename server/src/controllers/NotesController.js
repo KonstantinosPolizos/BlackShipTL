@@ -1,5 +1,4 @@
 const { PrismaClient } = require("@prisma/client");
-const { json } = require("express");
 
 const prisma = new PrismaClient();
 
@@ -25,9 +24,23 @@ const getManyNotes = async (req, res) => {
 
 const getOneNote = async (req, res) => {
   try {
-    res.status(200).json({ message: "Get one notes" });
+    const user = req.user;
+    const id = parseInt(req.params.id);
+
+    const oneNote = await prisma.post.findUnique({
+      where: {
+        authorId: user.id,
+        id: id,
+      },
+    });
+
+    if (!oneNote) {
+      throw new Error("Get notes: can't find this combination");
+    }
+
+    res.status(200).json({ message: JSON.stringify(oneNote) });
   } catch (error) {
-    res.status(400).json({ message: "Error in get one note" });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -61,17 +74,63 @@ const postOneNote = async (req, res) => {
 
 const updateOneNote = async (req, res) => {
   try {
-    res.status(200).json({ message: "Update one note" });
+    const { title, description } = req.body;
+    const user = req.user;
+    const id = parseInt(req.params.id);
+
+    const getPrevious = await prisma.post.findUnique({
+      where: {
+        id: id,
+        authorId: user.id,
+      },
+    });
+
+    if (!getPrevious) {
+      throw new Error("Update one note: note doesn't exist!");
+    }
+
+    const updatedNote = await prisma.post.update({
+      where: {
+        authorId: user.id,
+        id: id,
+      },
+      data: {
+        title: title || getPrevious.title,
+        description: description || getPrevious.description,
+      },
+    });
+
+    if (!updatedNote) {
+      throw new Error("Update one note: note didn't updated!");
+    }
+
+    res.status(200).json({ message: "Notes updated!" });
   } catch (error) {
-    res.status(400).json({ message: "Error in update one note" });
+    res.status(400).json({ error: error.message });
   }
 };
 
 const deleteOneNote = async (req, res) => {
   try {
-    res.status(200).json({ message: "Delete one note" });
+    const user = req.user;
+    const id = parseFloat(req.params.id);
+
+    const deletedNote = await prisma.post.delete({
+      where: {
+        id: id,
+        authorId: user.id,
+      },
+    });
+
+    if (!deletedNote) {
+      throw new Error(
+        "Delete one note: note doesn't exist or can't be deleted!"
+      );
+    }
+
+    res.status(200).json({ message: "Note deleted" });
   } catch (error) {
-    res.status(400).json({ message: "Error in delete one note" });
+    res.status(400).json({ error: error.message });
   }
 };
 
