@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("node:path");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -13,6 +14,15 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
+const pathToBuild = __dirname + "/../client/";
+
+app.use(express.static(path.join(pathToBuild, "build")));
+
+app.get("/", function (req, res) {
+  res.sendFile(path.join(pathToBuild, "build", "index.html"));
+});
+
 app.use("/api/users", require("./src/routes/UserRoutes"));
 app.use("/api/notes", require("./src/routes/NotesRoutes"));
 
