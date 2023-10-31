@@ -29,6 +29,10 @@
       "react-app/jest"
     ]
   },
+  "devServer": {
+    "compress": true,
+    "public": "blackship-todo-list.onrender.com"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
