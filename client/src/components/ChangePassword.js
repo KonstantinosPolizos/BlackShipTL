@@ -34,7 +34,7 @@ const ChangePassword = () => {
       if (!changeToken) return;
 
       await axios.put(
-        "http://localhost:8000/api/users/change-password",
+        process.env.ENDPOINT + "api/users/change-password",
         {
           password: password,
           confirmPassword: rePassword,

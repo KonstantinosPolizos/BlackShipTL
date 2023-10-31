@@ -32,7 +32,7 @@ const Signup = () => {
     try {
       e.preventDefault();
 
-      await axios.post("http://localhost:8000/api/users/sign-up", {
+      await axios.post(process.env.ENDPOINT + "api/users/sign-up", {
         email: email,
         name: name,
         password: password,

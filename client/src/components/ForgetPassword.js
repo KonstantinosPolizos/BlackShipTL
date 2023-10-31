@@ -15,7 +15,7 @@ const ForgetPassword = () => {
     try {
       e.preventDefault();
 
-      await axios.post("http://localhost:8000/api/users/forget-password", {
+      await axios.post(process.env.ENDPOINT + "api/users/forget-password", {
         email: email,
       });
 

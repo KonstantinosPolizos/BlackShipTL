@@ -21,7 +21,7 @@ const Login = () => {
     try {
       e.preventDefault();
 
-      const res = await axios.post("http://localhost:8000/api/users/sign-in", {
+      const res = await axios.post(process.env.ENDPOINT + "api/users/sign-in", {
         email: email,
         password: password,
       });

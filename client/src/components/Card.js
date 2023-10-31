@@ -31,7 +31,7 @@ const SimpleCard = (token) => {
   useEffect(() => {
     (async function () {
       try {
-        const notes = await axios.get("http://localhost:8000/api/notes", {
+        const notes = await axios.get(process.env.ENDPOINT + "api/notes", {
           headers: {
             Authorization: `Bearer ${token.token}`,
             "Content-Type": "application/json",
@@ -52,7 +52,7 @@ const SimpleCard = (token) => {
     if (clickEdit) {
       setClickEdit(false);
       setFocusId("");
-      const endpoint = `http://localhost:8000/api/notes/${id}`;
+      const endpoint = process.env.ENDPOINT + `api/notes/${id}`;
 
       try {
         await axios.put(
@@ -80,7 +80,7 @@ const SimpleCard = (token) => {
   const handleDelete = async (e) => {
     const id = e.target.closest(".card").id;
 
-    const endpoint = `http://localhost:8000/api/notes/${id}`;
+    const endpoint = process.env.ENDPOINT + `api/notes/${id}`;
 
     try {
       await axios.delete(endpoint, {
@@ -96,7 +96,7 @@ const SimpleCard = (token) => {
 
   const handleSave = async (e) => {
     setOpen(!open);
-    const endpoint = `http://localhost:8000/api/notes/`;
+    const endpoint = process.env.ENDPOINT + `api/notes/`;
 
     try {
       await axios.post(
