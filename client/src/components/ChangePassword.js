@@ -33,7 +33,7 @@ const ChangePassword = () => {
 
       if (!changeToken) return;
 
-      const res = await axios.put(
+      await axios.put(
         "http://localhost:8000/api/users/change-password",
         {
           password: password,

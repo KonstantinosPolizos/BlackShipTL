@@ -15,12 +15,9 @@ const ForgetPassword = () => {
     try {
       e.preventDefault();
 
-      const res = await axios.post(
-        "http://localhost:8000/api/users/forget-password",
-        {
-          email: email,
-        }
-      );
+      await axios.post("http://localhost:8000/api/users/forget-password", {
+        email: email,
+      });
 
       setEmail("");
     } catch (error) {
